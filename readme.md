@@ -8,7 +8,7 @@ Project date: from April to June/2022
 - Icon from: https://icon-icons.com/icon/file-archive/193973
 - Not commercial used.
 
-- This project will save me a some time at work because my services generate 70 GB of logs per month, and the law requires log archiving for +/- 20 years.
+- This project will save me a lot of time at work because my services generate 70 GB of logs per month, and the law requires log archiving for +/- 20 years.
 - I wrote this program after my job, because it is an element of my self-development.
 - If you find a bug you can write to me :)
 
