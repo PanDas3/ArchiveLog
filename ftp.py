@@ -27,40 +27,55 @@ class File_Transfer_Protocol():
             print(exc_info())
             self.log.error(exc_info())         
 
-    def transfer_zip(self, ftp, params):
+    def transfer_zip(self, ftp, ftp_params, archive_params):
 
-        if(type(params) == dict):
-            dest_path = params["org_dest_path_arch"]
+        year = str(archive_params["archive_year"])
+        month = archive_params["archive_month"]
+        app_name = archive_params["app_name"]
+        instance = archive_params["instance_name"]
+        prefix = archive_params["prefix_file_name"]
+
+        if(len(str(month)) == 1):
+            month = str(month)
+            date = f"{year}0{month}"
         else:
-            dest_path = params
+            date = f"{year}{month}"
+
+        if(type(ftp_params) == dict):
+            dest_path = ftp_params["org_dest_path_arch"]
+        else:
+            dest_path = ftp_params
+
+        tab = [date, app_name, instance]
         
         try:
             for name_loop in listdir(dest_path):
-                local_ftp_path = path.join(dest_path, name_loop)
+                if((name_loop in tab) or (name_loop.startswith(prefix) == True)):
+                    local_ftp_path = path.join(dest_path, name_loop)
 
-                if(path.isfile(local_ftp_path) == True):
-                    print("STOR", local_ftp_path)
-                    self.log.info(f"Moving {local_ftp_path} to FTP")
-                    ftp.storbinary('STOR ' + name_loop, open(local_ftp_path,'rb'))
+                    if(path.isfile(local_ftp_path) == True):
+                        print("STOR", local_ftp_path)
+                        self.log.info(f"Moving {local_ftp_path} to FTP")
+                        ftp.storbinary('STOR ' + name_loop, open(local_ftp_path,'rb'))
 
-                elif(path.isdir(local_ftp_path) == True):
-                    print("MKD", name_loop)
+                    elif(path.isdir(local_ftp_path) == True):
+                        print("MKD", name_loop)
 
-                    try:
-                        ftp.mkd(name_loop)
+                        try:
+                            ftp.mkd(name_loop)
 
-                    except error_perm as e:
-                        if(e.args[0].startswith("550") == False):
-                            self.log.warning(e.args[0])
-                            raise
+                        except error_perm as e:
+                            if(e.args[0].startswith("550") == False):
+                                self.log.warning(e.args[0])
+                                raise
 
-                    print("CWD", name_loop)
-                    ftp.cwd(name_loop)
-                    
-                    self.transfer_zip(ftp, local_ftp_path)
+                        print("CWD", name_loop)
+                        ftp.cwd(name_loop)
+                        
+                        self.transfer_zip(ftp, local_ftp_path, archive_params)
 
-                    print("CWD", "..")
-                    ftp.cwd("..")
+                        print("CWD", "..")
+                        ftp.cwd("..")
 
         except:
             print(exc_info()[1])

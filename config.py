@@ -101,11 +101,12 @@ class Configuration():
                 "instance_name":self.instance_name,
                 "end_file_name":end_file_name,
                 "auto_change_month":self.auto_change_month,
-                "delete_files":self.delete_files
+                "delete_files":self.delete_files,
+                "prefix_file_name":self.prefix_arch_file_name
                     }
 
     def get_FTP_params(self):
-        key = "TOP Secret"
+        key = "TOP SECRET"
         return {
             "move_to_FTP":self.move_to_FTP,
             "FTP_server_name":self.FTP_server_name,
@@ -171,10 +172,10 @@ class Configuration():
         len_ftp_pass = len(str(ftp_pass))
 
         if(len_ftp_pass > 0):
-           
-           #
-           # TOP SECRET
-           #
+            
+            #
+            # TOP SECRET
+            #
 
             ftp_params["FTP_pass"] = ftp_pass_decrypt
 
