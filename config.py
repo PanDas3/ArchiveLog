@@ -101,7 +101,8 @@ class Configuration():
                 "instance_name":self.instance_name,
                 "end_file_name":end_file_name,
                 "auto_change_month":self.auto_change_month,
-                "delete_files":self.delete_files
+                "delete_files":self.delete_files,
+                "prefix_file_name":self.prefix_arch_file_name
                     }
 
     def get_FTP_params(self):
