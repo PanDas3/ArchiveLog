@@ -107,6 +107,7 @@ class Configuration():
 
     def get_FTP_params(self):
         key = "TOP Secret"
+        kupa
         return {
             "move_to_FTP":self.move_to_FTP,
             "FTP_server_name":self.FTP_server_name,
