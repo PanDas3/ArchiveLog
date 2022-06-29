@@ -178,7 +178,6 @@ class Configuration():
            #
 
             ftp_params["FTP_pass"] = ftp_pass_decrypt
-            testowe gowno
 
         return ftp_params
 
