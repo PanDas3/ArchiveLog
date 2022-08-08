@@ -1,7 +1,7 @@
 # Project Name
-* ArchiveLog - version 1.1.30
+* ArchiveLog - version 1.2.5
 
-Project date: from April to June/2022
+Project date: from April to August/2022
 
 
 ## Additional infromation
@@ -38,6 +38,8 @@ The program has:
 ## Technologies Used
 - Python - version 3.10.1
   - SMTPLib
+  - ZipFile
+  - DateUtil
 - ConfigParser (pycparser) - version 2.21
 - ConfigUpdater - version 3.1
 - Cryptography - version 37.0.2
@@ -81,7 +83,7 @@ pyinstaller ArchiveLog.spec
 
 
 ## Project Status
-Project is: _in QA testing_
+Project is: _Production Deployment_
 
 <!-- _complete_ / _no longer being worked on_ (and why) -->
 

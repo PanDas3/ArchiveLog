@@ -1,10 +1,9 @@
-from email import message
-import imp
 from sys import exc_info
 from smtplib import SMTP
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 
+# Custom
 from log import Log
 
 class SendMail():
