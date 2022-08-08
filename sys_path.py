@@ -2,6 +2,8 @@ from pathlib import Path
 from os import path, listdir, remove, chdir
 from shutil import rmtree
 from sys import exc_info
+from datetime import datetime
+from dateutil.relativedelta import relativedelta
 
 # Custom
 from log import Log
@@ -36,57 +38,59 @@ class SysPath():
             self.log.exception(exc_info())
             exit()
 
-    def delete_log_files(self, sort_files, params): #delete_log
-        src_path = params["source_path_arch"]
-        day_separate = params["day_separate"]
+    def delete_log_files(self, sort_files, params):
 
-        try:
-            self.log.info("Delete log files after finishing archiving")
-            chdir(src_path)
-            if(day_separate == True):
-                for files in sort_files:
-                    for file in files:
+        delete_files = params["delete_files"]
+
+        if(delete_files == True):
+            src_path = params["source_path_arch"]
+            day_separate = params["day_separate"]
+
+            try:
+                self.log.info("Delete log files after finishing archiving")
+                chdir(src_path)
+                if(day_separate == True):
+                    for files in sort_files:
+                        for file in files:
+                            remove(file)
+
+                elif(day_separate == False):
+                    for file in sort_files:
                         remove(file)
 
-            elif(day_separate == False):
-                for file in sort_files:
-                    remove(file)
+                self.log.info("Delete completed")
 
-            self.log.info("Delete completed")
-
-        except:
-            print(exc_info())
-            self.log.exception(exc_info())
+            except:
+                print(exc_info())
+                self.log.exception(exc_info())
 
     def delete_archives(self, archive_params, ftp_params):
-        delete_files = archive_params["delete_files"]
-        if(delete_files == True):
+        del_archives = ftp_params["del_archives"]
+        if(del_archives == True):
             try:
                 month = int(archive_params["archive_month"])
                 year = int(archive_params["archive_year"])
-                del_archives = ftp_params["del_archives"]
-                month_to_del_zip = ftp_params["month_to_del_zip"]
+                month_to_del_zip = int(ftp_params["month_to_del_zip"])
                 dest_path = ftp_params["org_dest_path_arch"]
+                app_name = archive_params["app_name"]
+                instance = archive_params["instance_name"]
 
-                if(del_archives == True):
-                    chdir(dest_path)
-                    if(month_to_del_zip > 0):
-                        tmp_month = month - month_to_del_zip
-                        if(tmp_month < 1):
-                            tmp_month = 12 + tmp_month
-                            year -= 1
+                chdir(dest_path)
 
-                        if(len(str(tmp_month)) == 1):
-                            tmp_month = str(tmp_month)
-                            tmp_month = f"0{tmp_month}"
+                date = datetime(year, month, 1)
+                date = date + relativedelta(months =- month_to_del_zip)
+                date = str(date.strftime("%Y%m"))
+                del_path = f"{dest_path}\\{date}"
 
-                        del_path = f"{dest_path}\\{year}{tmp_month}"
+                if(len(listdir(f"{del_path}\\{app_name}")) >= 2):
+                    del_path = f"{del_path}\\{app_name}\\{instance}"
 
-                    elif(month_to_del_zip == 0):
-                        del_path = f"{dest_path}\\{year}{month}"
+                rmtree(del_path)
+                self.log.info(f"Removing path with archives: {del_path}")
 
-                    rmtree(del_path)
-                    self.log.info(f"Removing path with archives: {del_path}")
+            except FileNotFoundError:
+                print(exc_info()[:-1])
+                self.log.exception(exc_info()[:-1])
             
             except:
                 print(exc_info())

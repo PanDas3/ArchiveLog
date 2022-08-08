@@ -1,6 +1,5 @@
 from configparser import ConfigParser, MissingSectionHeaderError
-from cryptography.fernet import Fernet
-from sys import exc_info, exit, path as script_path
+from sys import exc_info, exit
 from shutil import rmtree
 from os import path
 from configupdater import ConfigUpdater
@@ -56,6 +55,13 @@ class Configuration():
             self.FTP_login = config["FTP"]["FTP_Login"]
             self.FTP_pass = config["FTP"]["FTP_Pass"]
 
+            # Read Mail
+            self.send_error = config["SMTP"]["Send_Errors"].lower()
+            self.mail_sender = config["SMTP"]["Mail_Sender"]
+            self.mail_receivers = config["SMTP"]["Mail_Receivers"].lower()
+            self.mail_server = config["SMTP"]["Mail_Server"].lower()
+            self.mail_port = int(config["SMTP"]["Mail_Port"])
+
             # Change string to bool
             self.log_name_format_year_6char = str_to_bool(self.log_name_format_year_6char)
             self.day_separatley = str_to_bool(self.day_separatley)
@@ -63,7 +69,10 @@ class Configuration():
             self.auto_change_month = str_to_bool(self.auto_change_month)
             self.move_to_FTP = str_to_bool(self.move_to_FTP)
             self.del_archives = str_to_bool(self.del_archives)
+            self.send_error = str_to_bool(self.send_error)
 
+            self.mail_receivers = self.mail_receivers.replace(",", ", ").replace("  ", " ")
+            self.mail_receivers = list(self.mail_receivers.split(", "))
 
         except AttributeError as err:
             self.log.error(f"Config Error: {err}")
@@ -99,14 +108,14 @@ class Configuration():
                 "archive_month":self.archive_month,
                 "app_name":self.app_name,
                 "instance_name":self.instance_name,
+                "prefix_file_name":self.prefix_arch_file_name,
                 "end_file_name":end_file_name,
                 "auto_change_month":self.auto_change_month,
-                "delete_files":self.delete_files,
-                "prefix_file_name":self.prefix_arch_file_name
+                "delete_files":self.delete_files
                     }
 
     def get_FTP_params(self):
-        key = "TOP Secret"
+        key = "TOP SECRET"
         return {
             "move_to_FTP":self.move_to_FTP,
             "FTP_server_name":self.FTP_server_name,
@@ -117,6 +126,16 @@ class Configuration():
             "org_dest_path_arch":self.destination_path_arch,
             "del_archives":self.del_archives,
             "month_to_del_zip":self.month_to_del_zip
+        }
+
+    def get_SMTP_params(self):
+        return {
+            "send_error":self.send_error,
+            "mail_sender":self.mail_sender,
+            "mail_receiver":self.mail_receivers,
+            "mail_server":self.mail_server,
+            "mail_port":self.mail_port,
+            "server_error":self.server_name
         }
             
     def change_config_to_next_month(self, config_name):
@@ -160,6 +179,7 @@ class Configuration():
             # TOP SECRET
             #
 
+            ftp_params["FTP_pass"] = ftp_encrypt_pass
             update_config["FTP"]["FTP_pass"].value = ftp_encrypt_pass
             update_config.update_file()
             self.log.info("Updated password in config.ini")
@@ -172,12 +192,10 @@ class Configuration():
         len_ftp_pass = len(str(ftp_pass))
 
         if(len_ftp_pass > 0):
-           
-           #
-           # TOP SECRET
-           #
-
-            ftp_params["FTP_pass"] = ftp_pass_decrypt
+            
+            #
+            # TOP SECRET
+            #
 
         return ftp_params
 
@@ -234,7 +252,19 @@ FTP_Server_Name = localhost
 FTP_Port = 21
 # Passy FTP
 FTP_Login = user
-FTP_Pass = pass"""
+FTP_Pass = 
+
+[SMTP]
+# Czy wysłać maila o błędzie?
+Send_Error = False
+# Nadawca
+Mail_Sender = Archiwizator@rachuna.com
+# Odbiorcy
+Mail_Receivers = test@rachuna.com, test2@rachuna.com
+# Host SMTP
+Mail_Server = smtp.qa.rachuna.com
+# Port SMTP
+Mail_Port = 25"""
         try:
             open(file_config)
 

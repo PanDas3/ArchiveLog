@@ -10,7 +10,14 @@ class Zipping():
         self.log = Log()
 
     def zip(self, sort_file, params):
-        def zipping(filename, files, src_path):
+        def zipping(filename, files, src_path, separate):
+            if(separate == True):
+                for file in files:
+                    if(file[-13] != "_Messages.log"):
+                        file_of_day = file[-6:-4]
+                        filename = f"{filename}{file_of_day}"
+                        break
+
             with ZipFile(filename, mode="w", compression=ZIP_DEFLATED, compresslevel=9) as archive:
                 for file in files:
                     print(f"{src_path}\\{file}")
@@ -28,13 +35,8 @@ class Zipping():
 
         if(separate == True):
             for files in sort_file:
-                if(len(str(tmp_day)) == 1):
-                    day = f"0{tmp_day}"
-                else:
-                    day = tmp_day
+                zipping(f"{dest_path}\\{end_file_name}.zip", files, src_path)
 
-                zipping(f"{dest_path}\\{end_file_name}{day}.zip", files, src_path)
-                tmp_day += 1
         elif(separate == False):
             zipping(f"{dest_path}\\{end_file_name}.zip", sort_file, src_path)
 
@@ -63,6 +65,7 @@ class Zipping():
             archive.close()
             print(exc_info())
             self.log.exception(exc_info()[:-1])
+            # raise
 
         finally: 
             return result_test

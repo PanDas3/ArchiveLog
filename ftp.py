@@ -1,6 +1,6 @@
 from ftplib import FTP, error_perm
 from os import listdir, path
-from sys import exc_info
+from sys import exc_info, exit
 
 from log import Log
 
@@ -41,12 +41,12 @@ class File_Transfer_Protocol():
         else:
             date = f"{year}{month}"
 
+        tab = [date, app_name, instance]
+
         if(type(ftp_params) == dict):
             dest_path = ftp_params["org_dest_path_arch"]
         else:
             dest_path = ftp_params
-
-        tab = [date, app_name, instance]
         
         try:
             for name_loop in listdir(dest_path):
@@ -94,6 +94,7 @@ class File_Transfer_Protocol():
         except:
             print(exc_info())
             self.log.error(exc_info()[:-1])
+            exit()
 
     def __del__(self) -> None:
         del self.log
