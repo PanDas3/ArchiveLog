@@ -1,5 +1,5 @@
 # Project Name
-* ArchiveLog - version 1.1.29
+* ArchiveLog - version 1.1.30
 
 Project date: from April to June/2022
 
@@ -32,10 +32,12 @@ The program has:
 - Export archives log to FTP
 - Delete source logs from directory
 - Delete archives files (with time shift)
+- Sending E-Mail after error 
 
 
 ## Technologies Used
 - Python - version 3.10.1
+* SMTPLib
 - ConfigParser (pycparser) - version 2.21
 - ConfigUpdater - version 3.1
 - Cryptography - version 37.0.2
