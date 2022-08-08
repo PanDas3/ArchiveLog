@@ -37,7 +37,7 @@ The program has:
 
 ## Technologies Used
 - Python - version 3.10.1
-* SMTPLib
+  - SMTPLib
 - ConfigParser (pycparser) - version 2.21
 - ConfigUpdater - version 3.1
 - Cryptography - version 37.0.2
