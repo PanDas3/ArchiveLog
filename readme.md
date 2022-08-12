@@ -1,5 +1,5 @@
 # Project Name
-* ArchiveLog - version 1.2.5
+* ArchiveLog - version 1.2.7
 
 Project date: from April to August/2022
 
