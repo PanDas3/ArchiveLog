@@ -172,9 +172,6 @@ class Configuration():
         self.log.info("Checking FTP password")
         if((len_ftp_pass > 0) and (len_ftp_pass < 99)):
 
-            update_config = ConfigUpdater()
-            update_config.read(config_name)
-
             #
             # TOP SECRET
             #
@@ -192,10 +189,10 @@ class Configuration():
         len_ftp_pass = len(str(ftp_pass))
 
         if(len_ftp_pass > 0):
-            
             #
             # TOP SECRET
             #
+            ftp_params["FTP_pass"] = ftp_pass_decrypt
 
         return ftp_params
 
@@ -265,8 +262,11 @@ Mail_Receivers = test@rachuna.com, test2@rachuna.com
 Mail_Server = smtp.qa.rachuna.com
 # Port SMTP
 Mail_Port = 25"""
+
+        ok = False
         try:
             open(file_config)
+            ok = True
 
         except IOError:
             err = "Config Error: Not found config.ini or is demaged !"
@@ -282,19 +282,18 @@ Mail_Port = 25"""
                 default_config.close()
                 
             self.log.warning("Created default config.ini")
-            self.log.warning("Complete the config.ini")
-            exit()
-            
+            self.log.warning("Complete the config.ini")    
 
         except KeyError as err:
             print(err)
             self.log.error(f"Config Error: {err}")
-            exit()
 
         except:
             print(exc_info())
             self.log.exception(exc_info())
-            exit()
+
+        finally:
+            return ok
 
     def __del__(self) -> None:
         del self.log
